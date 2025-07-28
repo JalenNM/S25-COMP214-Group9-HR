@@ -66,7 +66,7 @@ s25-comp214-group9-hr/
 - **API Integration**: Seamless backend communication
 - **Form Validation**: Client-side and server-side validation
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Backend
 - **Runtime**: Node.js
@@ -83,7 +83,7 @@ s25-comp214-group9-hr/
 - **HTTP Client**: Fetch API (ready for Axios)
 - **Routing**: React Router (to be added)
 
-## 📋 Prerequisites
+## Prerequisites
 
 1. **Oracle Database**: Access to Oracle database (local or cloud)
 2. **Oracle Client Libraries**: Oracle Instant Client installed
@@ -94,7 +94,7 @@ s25-comp214-group9-hr/
 
 ### 1. Clone Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/JalenNM/S25-COMP214-Group9-HR
 cd s25-comp214-group9-hr
 ```
 
@@ -151,7 +151,7 @@ sqlplus username/password@database < database/sample-data.sql
 
 ## Team Members
 
-- [Add team member names here]
+- Jalen Mendonca
 
 ## License
 
