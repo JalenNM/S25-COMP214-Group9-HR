@@ -57,6 +57,12 @@ export const employeeAPI = {
   
   // Get employee statistics
   getStatistics: () => apiCall('/employees/statistics'),
+  
+  // Hire employee using stored procedure
+  hire: (employeeData) => apiCall('/employees/hire', {
+    method: 'POST',
+    body: JSON.stringify(employeeData),
+  }),
 }
 
 // Department API calls
