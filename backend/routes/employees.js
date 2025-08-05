@@ -4,50 +4,81 @@ const router = express.Router();
 
 /**
  * GET /api/employees
- * Get all employees with pagination
+ * Get all employees with optional pagination
  */
 router.get('/', async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
     
-    const sql = `
-      SELECT 
-        e.EMPLOYEE_ID,
-        e.FIRST_NAME,
-        e.LAST_NAME,
-        e.EMAIL,
-        e.PHONE_NUMBER,
-        e.HIRE_DATE,
-        e.SALARY,
-        j.JOB_TITLE,
-        d.DEPARTMENT_NAME,
-        m.FIRST_NAME || ' ' || m.LAST_NAME as MANAGER_NAME
-      FROM HR_EMPLOYEES e
-      LEFT JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
-      LEFT JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
-      LEFT JOIN HR_EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID
-      ORDER BY e.EMPLOYEE_ID
-      OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY
-    `;
-    
-    const countSql = 'SELECT COUNT(*) as TOTAL FROM HR_EMPLOYEES';
-    
-    const [employees, count] = await Promise.all([
-      executeQuery(sql, { offset, limit }),
-      executeQuery(countSql)
-    ]);
-    
-    res.json({
-      data: employees.rows,
-      pagination: {
-        page,
-        limit,
-        total: count.rows[0].TOTAL,
-        totalPages: Math.ceil(count.rows[0].TOTAL / limit)
-      }
-    });
+    // If pagination parameters are provided, use pagination
+    if (page && limit) {
+      const offset = (page - 1) * limit;
+      
+      const sql = `
+        SELECT 
+          e.EMPLOYEE_ID,
+          e.FIRST_NAME,
+          e.LAST_NAME,
+          e.EMAIL,
+          e.PHONE_NUMBER,
+          e.HIRE_DATE,
+          e.SALARY,
+          j.JOB_TITLE,
+          d.DEPARTMENT_NAME,
+          m.FIRST_NAME || ' ' || m.LAST_NAME as MANAGER_NAME
+        FROM HR_EMPLOYEES e
+        LEFT JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+        LEFT JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+        LEFT JOIN HR_EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID
+        ORDER BY e.EMPLOYEE_ID
+        OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY
+      `;
+      
+      const countSql = 'SELECT COUNT(*) as TOTAL FROM HR_EMPLOYEES';
+      
+      const [employees, count] = await Promise.all([
+        executeQuery(sql, { offset, limit }),
+        executeQuery(countSql)
+      ]);
+      
+      res.json({
+        data: employees.rows,
+        pagination: {
+          page,
+          limit,
+          total: count.rows[0].TOTAL,
+          totalPages: Math.ceil(count.rows[0].TOTAL / limit)
+        }
+      });
+    } else {
+      // Return all employees without pagination
+      const sql = `
+        SELECT 
+          e.EMPLOYEE_ID,
+          e.FIRST_NAME,
+          e.LAST_NAME,
+          e.EMAIL,
+          e.PHONE_NUMBER,
+          e.HIRE_DATE,
+          e.SALARY,
+          j.JOB_TITLE,
+          d.DEPARTMENT_NAME,
+          m.FIRST_NAME || ' ' || m.LAST_NAME as MANAGER_NAME
+        FROM HR_EMPLOYEES e
+        LEFT JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+        LEFT JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+        LEFT JOIN HR_EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID
+        ORDER BY e.EMPLOYEE_ID
+      `;
+      
+      const employees = await executeQuery(sql);
+      
+      res.json({
+        data: employees.rows,
+        total: employees.rows.length
+      });
+    }
     
   } catch (error) {
     console.error('Error fetching employees:', error);
@@ -290,6 +321,98 @@ router.post('/', async (req, res) => {
       res.status(400).json({ error: 'Numeric value is too large for the field precision' });
     } else {
       res.status(500).json({ error: 'Failed to create employee' });
+    }
+  }
+});
+
+/**
+ * POST /api/employees/hire
+ * Hire a new employee using stored procedure
+ */
+router.post('/hire', async (req, res) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      jobId,
+      salary,
+      commissionPct,
+      managerId,
+      departmentId
+    } = req.body;
+
+    // Debug: Log the incoming request data
+    console.log('Hire request data:', JSON.stringify(req.body, null, 2));
+
+    // Validate required fields
+    if (!firstName || !lastName || !email || !jobId) {
+      console.log('Validation failed - missing required fields');
+      return res.status(400).json({ 
+        error: 'First name, last name, email, and job ID are required' 
+      });
+    }
+
+    // Call the stored procedure
+    const sql = `
+      BEGIN
+        employee_hire_sp(
+          p_first_name => :firstName,
+          p_last_name => :lastName,
+          p_email => :email,
+          p_phone_number => :phoneNumber,
+          p_job_id => :jobId,
+          p_salary => :salary,
+          p_commission_pct => :commissionPct,
+          p_manager_id => :managerId,
+          p_department_id => :departmentId
+        );
+      END;
+    `;
+    
+    const binds = {
+      firstName,
+      lastName,
+      email,
+      phoneNumber: phoneNumber || null,
+      jobId,
+      salary: salary || null,
+      commissionPct: commissionPct || null,
+      managerId: managerId || null,
+      departmentId: departmentId || null
+    };
+
+    // Debug: Log the bind parameters
+    console.log('Bind parameters:', JSON.stringify(binds, null, 2));
+
+    await executeQuery(sql, binds);
+    
+    res.status(201).json({ 
+      message: 'Employee hired successfully',
+      data: { email }
+    });
+    
+  } catch (error) {
+    console.error('Error hiring employee:', error);
+    console.error('Error details:', {
+      message: error.message,
+      errorNum: error.errorNum,
+      offset: error.offset,
+      stack: error.stack
+    });
+    
+    // Handle specific Oracle errors
+    if (error.errorNum === 1) {
+      res.status(409).json({ error: 'Employee with this email already exists' });
+    } else if (error.errorNum === 2291) {
+      res.status(400).json({ error: 'Invalid foreign key reference (job, manager, or department)' });
+    } else if (error.errorNum === 12899) {
+      res.status(400).json({ error: 'One or more field values exceed maximum length' });
+    } else if (error.errorNum === 1438) {
+      res.status(400).json({ error: 'Numeric value is too large for the field precision' });
+    } else {
+      res.status(500).json({ error: 'Failed to hire employee: ' + error.message });
     }
   }
 });

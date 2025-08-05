@@ -54,7 +54,6 @@ s25-comp214-group9-hr/
 - **Employee Management**: Complete CRUD operations with validation
 - **Department Management**: Department and location handling
 - **Job Management**: Job positions with salary ranges
-- **Analytics Endpoints**: Statistics and reporting
 - **Oracle Integration**: Professional database connection pooling
 - **Data Validation**: Schema-compliant field validation
 - **Error Handling**: Comprehensive Oracle error handling
@@ -73,7 +72,6 @@ s25-comp214-group9-hr/
 - **Framework**: Express.js
 - **Database**: Oracle Database
 - **ORM**: oracledb (Official Oracle driver)
-- **Security**: Helmet, CORS
 - **Environment**: dotenv
 
 ### Frontend
@@ -135,11 +133,6 @@ sqlplus username/password@database < database/sample-data.sql
 - **Employees**: `/api/employees` - CRUD operations
 - **Departments**: `/api/departments` - Department management
 - **Jobs**: `/api/jobs` - Job position management
-
-### Analytics Endpoints
-- **Employee Stats**: `/api/employees/stats` - Employee analytics
-- **Department Stats**: `/api/departments/stats` - Department analytics
-- **Job Stats**: `/api/jobs/stats` - Job market analytics
 
 ## Academic Information
 
