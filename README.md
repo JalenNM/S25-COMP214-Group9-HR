@@ -146,6 +146,7 @@ sqlplus username/password@database < database/sample-data.sql
 
 - Jalen Mendonca
 - Tsinat Timotewos
+- Maharaj Nath
 
 ## License
 
