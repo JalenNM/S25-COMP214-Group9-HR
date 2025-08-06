@@ -33,6 +33,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+// API Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    message: 'HR API Server is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API routes
 app.use('/api/employees', employeeRoutes);
 app.use('/api/departments', departmentRoutes);

@@ -197,7 +197,22 @@ function EmployeePage() {
       fetchEmployees()
       
     } catch (err) {
-      setHireError(err.message || 'Failed to hire employee')
+      // Handle specific trigger and procedure errors
+      let errorMessage = err.message || 'Failed to hire employee'
+      
+      // Check if the error contains trigger-specific messages
+      if (errorMessage.includes('Salary out of range') || errorMessage.includes('Should be between')) {
+        setHireError(`❌ Salary Validation Trigger Activated: ${errorMessage}`)
+      } else if (errorMessage.includes('Job ID') && errorMessage.includes('not found')) {
+        setHireError(`❌ Job Validation Trigger Activated: ${errorMessage}`)
+      } else if (errorMessage.includes('ORA-20100')) {
+        setHireError('❌ Salary Validation Trigger Activated: Salary is outside the valid range for this job position')
+      } else if (errorMessage.includes('ORA-20101')) {
+        setHireError('❌ Job Validation Trigger Activated: Invalid job ID specified')
+      } else {
+        setHireError(errorMessage)
+      }
+      
       console.error('Error hiring employee:', err)
     } finally {
       setIsHiring(false)
@@ -222,6 +237,17 @@ function EmployeePage() {
 
   // Inline editing functions
   const startEditing = (employee) => {
+    // Clear any previous success/error messages when starting to edit a new employee
+    setUpdateError(null)
+    setUpdateSuccess(null)
+    
+    // Debug: Log the employee data to see what we're getting
+    console.log('Starting to edit employee:', employee)
+    console.log('Available dropdown data:')
+    console.log('  Jobs:', jobs)
+    console.log('  Departments:', departments) 
+    console.log('  Managers:', managers)
+    
     setEditingEmployee(employee.EMPLOYEE_ID)
     setEditForm({
       firstName: employee.FIRST_NAME || '',
@@ -234,8 +260,20 @@ function EmployeePage() {
       managerId: employee.MANAGER_ID || '',
       departmentId: employee.DEPARTMENT_ID || ''
     })
-    setUpdateError(null)
-    setUpdateSuccess(null)
+    
+    // Debug: Log the form data that was set
+    const formData = {
+      firstName: employee.FIRST_NAME || '',
+      lastName: employee.LAST_NAME || '',
+      email: employee.EMAIL || '',
+      phoneNumber: employee.PHONE_NUMBER || '',
+      jobId: employee.JOB_ID || '',
+      salary: employee.SALARY || '',
+      commissionPct: employee.COMMISSION_PCT || '',
+      managerId: employee.MANAGER_ID || '',
+      departmentId: employee.DEPARTMENT_ID || ''
+    }
+    console.log('Form data set to:', formData)
   }
 
   const cancelEditing = () => {
@@ -260,8 +298,8 @@ function EmployeePage() {
 
     try {
       // Validate required fields
-      if (!editForm.firstName || !editForm.lastName || !editForm.email) {
-        throw new Error('First Name, Last Name, and Email are required')
+      if (!editForm.firstName || !editForm.lastName || !editForm.email || !editForm.jobId) {
+        throw new Error('First Name, Last Name, Email, and Job Title are required')
       }
 
       // Prepare data for API call
@@ -270,18 +308,19 @@ function EmployeePage() {
         lastName: editForm.lastName.trim(),
         email: editForm.email.trim(),
         phoneNumber: editForm.phoneNumber.trim() || null,
-        jobId: editForm.jobId ? parseInt(editForm.jobId) : null,
-        salary: editForm.salary ? parseFloat(editForm.salary) : null,
-        commissionPct: editForm.commissionPct ? parseFloat(editForm.commissionPct) : null,
-        managerId: editForm.managerId ? parseInt(editForm.managerId) : null,
-        departmentId: editForm.departmentId ? parseInt(editForm.departmentId) : null
+        jobId: editForm.jobId && editForm.jobId !== '' ? editForm.jobId : null,
+        salary: editForm.salary && editForm.salary !== '' ? parseFloat(editForm.salary) : null,
+        commissionPct: editForm.commissionPct && editForm.commissionPct !== '' ? parseFloat(editForm.commissionPct) : null,
+        managerId: editForm.managerId && editForm.managerId !== '' ? parseInt(editForm.managerId) : null,
+        departmentId: editForm.departmentId && editForm.departmentId !== '' ? parseInt(editForm.departmentId) : null
       }
 
       await employeeAPI.update(employeeId, updateData)
       
       setUpdateSuccess(`Employee ${editForm.firstName} ${editForm.lastName} updated successfully`)
-      setEditingEmployee(null)
-      setEditForm({})
+      // Don't reset editing state - keep the form in edit mode with current values
+      // setEditingEmployee(null)
+      // setEditForm({})
       
       // Refresh the search results and main employee list
       if (searchQuery) {
@@ -290,7 +329,22 @@ function EmployeePage() {
       fetchEmployees()
       
     } catch (err) {
-      setUpdateError(err.message || 'Failed to update employee')
+      // Handle specific trigger and procedure errors
+      let errorMessage = err.message || 'Failed to update employee'
+      
+      // Check if the error contains trigger-specific messages
+      if (errorMessage.includes('Salary out of range') || errorMessage.includes('Should be between')) {
+        setUpdateError(`❌ Salary Validation Trigger Activated: ${errorMessage}`)
+      } else if (errorMessage.includes('Job ID') && errorMessage.includes('not found')) {
+        setUpdateError(`❌ Job Validation Trigger Activated: ${errorMessage}`)
+      } else if (errorMessage.includes('ORA-20100')) {
+        setUpdateError('❌ Salary Validation Trigger Activated: Salary is outside the valid range for this job position')
+      } else if (errorMessage.includes('ORA-20101')) {
+        setUpdateError('❌ Job Validation Trigger Activated: Invalid job ID specified')
+      } else {
+        setUpdateError(errorMessage)
+      }
+      
       console.error('Error updating employee:', err)
     } finally {
       setIsUpdating(false)
@@ -713,8 +767,10 @@ function EmployeePage() {
                 <li>Fields marked with <span className="text-danger">*</span> are required</li>
                 <li>Email must be unique in the system</li>
                 <li>Select appropriate Job Title, Department, and Manager from dropdown lists</li>
+                <li><strong>Salary Validation:</strong> The system will automatically validate that the salary is within the valid range for the selected job position</li>
                 <li>Salary and Commission are optional fields</li>
                 <li>Click "Hire Employee" to add the employee to the database using the stored procedure</li>
+                <li><strong>Database Triggers:</strong> Salary validation triggers are active and will prevent invalid salary ranges</li>
               </ul>
             </div>
             
@@ -817,6 +873,7 @@ function EmployeePage() {
                 <li>Search by job title or department name</li>
                 <li>Click "Edit" to modify employee information inline</li>
                 <li>Click "Save" to confirm changes or "Cancel" to discard</li>
+                <li><strong>Salary Validation:</strong> Database triggers will validate salary ranges when updating</li>
                 <li>Search is case-insensitive</li>
               </ul>
             </div>
@@ -902,7 +959,7 @@ function EmployeePage() {
                               <td>
                                 {isEditing ? (
                                   <input 
-                                    type="email" 
+                                    type="text" 
                                     className="form-control form-control-sm" 
                                     name="email"
                                     value={editForm.email}
@@ -940,8 +997,9 @@ function EmployeePage() {
                                   <select 
                                     className="form-select form-select-sm" 
                                     name="jobId"
-                                    value={editForm.jobId}
+                                    value={editForm.jobId || ''}
                                     onChange={handleEditFormChange}
+                                    required
                                   >
                                     <option value="">Select job...</option>
                                     {jobs.map((job) => (
@@ -963,7 +1021,7 @@ function EmployeePage() {
                                   <select 
                                     className="form-select form-select-sm" 
                                     name="departmentId"
-                                    value={editForm.departmentId}
+                                    value={editForm.departmentId || ''}
                                     onChange={handleEditFormChange}
                                   >
                                     <option value="">Select dept...</option>
@@ -1007,7 +1065,7 @@ function EmployeePage() {
                                   <select 
                                     className="form-select form-select-sm" 
                                     name="managerId"
-                                    value={editForm.managerId}
+                                    value={editForm.managerId || ''}
                                     onChange={handleEditFormChange}
                                   >
                                     <option value="">Select manager...</option>
@@ -1076,7 +1134,8 @@ function EmployeePage() {
                     {editingEmployee && (
                       <div className="alert alert-info mt-3">
                         <strong>Editing Mode:</strong> You are currently editing employee ID {editingEmployee}. 
-                        Fill in the required fields and click "Save" to update, or "Cancel" to discard changes.
+                        Fill in the required fields and click "Save" to update. The form will remain in edit mode after saving.
+                        Click "Cancel" to exit editing mode and discard any unsaved changes.
                       </div>
                     )}
                   </div>
