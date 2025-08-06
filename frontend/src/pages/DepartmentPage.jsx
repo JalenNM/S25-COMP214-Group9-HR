@@ -14,7 +14,6 @@ function DepartmentPage() {
   const [departments, setDepartments] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [statistics, setStatistics] = useState(null)
   const [searchResults, setSearchResults] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearching, setIsSearching] = useState(false)
@@ -23,8 +22,6 @@ function DepartmentPage() {
   useEffect(() => {
     if (activeTab === 'list') {
       fetchDepartments()
-    } else if (activeTab === 'stats') {
-      fetchStatistics()
     }
   }, [activeTab])
 
@@ -37,20 +34,6 @@ function DepartmentPage() {
     } catch (err) {
       setError('Failed to fetch departments: ' + err.message)
       console.error('Error fetching departments:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchStatistics = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const response = await departmentAPI.getStatistics()
-      setStatistics(response.data || {})
-    } catch (err) {
-      setError('Failed to fetch statistics: ' + err.message)
-      console.error('Error fetching statistics:', err)
     } finally {
       setLoading(false)
     }
@@ -116,7 +99,7 @@ function DepartmentPage() {
           <strong>Error:</strong> {error}
           <button 
             className="btn btn-outline-danger btn-sm ms-2" 
-            onClick={() => activeTab === 'list' ? fetchDepartments() : fetchStatistics()}
+            onClick={fetchDepartments}
           >
             Retry
           </button>
@@ -283,62 +266,6 @@ function DepartmentPage() {
             )}
           </div>
         )
-      case 'stats':
-        return (
-          <div className="tab-content">
-            <h4>Department Statistics</h4>
-            {statistics ? (
-              <div className="row">
-                <div className="col-md-3">
-                  <div className="card text-center">
-                    <div className="card-body">
-                      <h5 className="card-title">Total Departments</h5>
-                      <h2 className="text-primary">{statistics.TOTAL_DEPARTMENTS || 0}</h2>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-3">
-                  <div className="card text-center">
-                    <div className="card-body">
-                      <h5 className="card-title">Total Employees</h5>
-                      <h2 className="text-success">{statistics.TOTAL_EMPLOYEES || 0}</h2>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-3">
-                  <div className="card text-center">
-                    <div className="card-body">
-                      <h5 className="card-title">Avg Dept Size</h5>
-                      <h2 className="text-info">{statistics.AVG_DEPT_SIZE ? Math.round(statistics.AVG_DEPT_SIZE) : 0}</h2>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-3">
-                  <div className="card text-center">
-                    <div className="card-body">
-                      <h5 className="card-title">Locations</h5>
-                      <h2 className="text-warning">{statistics.TOTAL_LOCATIONS || 0}</h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="alert alert-info">
-                Click refresh to load statistics.
-              </div>
-            )}
-          </div>
-        )
-      case 'hierarchy':
-        return (
-          <div className="tab-content">
-            <h4>Department Hierarchy</h4>
-            <p>View the organizational structure and reporting relationships.</p>
-            <div className="alert alert-secondary">
-              <strong>Coming Soon:</strong> Visual department hierarchy and organizational chart.
-            </div>
-          </div>
-        )
       default:
         return null
     }
@@ -371,22 +298,6 @@ function DepartmentPage() {
             onClick={() => setActiveTab('search')}
           >
             Search Departments
-          </button>
-        </li>
-        <li className="nav-item">
-          <button 
-            className={`nav-link ${activeTab === 'stats' ? 'active' : ''}`}
-            onClick={() => setActiveTab('stats')}
-          >
-            Statistics
-          </button>
-        </li>
-        <li className="nav-item">
-          <button 
-            className={`nav-link ${activeTab === 'hierarchy' ? 'active' : ''}`}
-            onClick={() => setActiveTab('hierarchy')}
-          >
-            Hierarchy
           </button>
         </li>
       </ul>
