@@ -108,6 +108,21 @@ export const jobAPI = {
   // Get job by ID
   getById: (id) => apiCall(`/jobs/${id}`),
   
+  // Get job description using stored function
+  getDescription: (id) => apiCall(`/jobs/${id}/description`),
+  
+  // Update job info using stored procedure
+  updateInfo: (id, jobData) => apiCall(`/jobs/${id}/update-info`, {
+    method: 'PUT',
+    body: JSON.stringify(jobData),
+  }),
+  
+  // Create new job using stored procedure
+  createNewJob: (jobData) => apiCall('/jobs/new-job', {
+    method: 'POST',
+    body: JSON.stringify(jobData),
+  }),
+  
   // Search jobs
   search: (query) => apiCall(`/jobs/search?q=${encodeURIComponent(query)}`),
   
