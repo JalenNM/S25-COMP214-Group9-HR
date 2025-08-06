@@ -145,6 +145,7 @@ sqlplus username/password@database < database/sample-data.sql
 ## Team Members
 
 - Jalen Mendonca
+- Tsinat Timotewos
 
 ## License
 
