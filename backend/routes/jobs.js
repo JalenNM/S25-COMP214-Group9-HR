@@ -158,6 +158,186 @@ router.get('/:id/employees', async (req, res) => {
 });
 
 /**
+ * GET /api/jobs/:id/description
+ * Get job description using the stored function
+ */
+router.get('/:id/description', async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    
+    // Call the stored function get_job_description
+    const sql = `
+      SELECT get_job_description(:jobId) as JOB_DESCRIPTION FROM DUAL
+    `;
+    
+    const result = await executeQuery(sql, { jobId });
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Unable to retrieve job description' });
+    }
+    
+    const jobDescription = result.rows[0].JOB_DESCRIPTION;
+    
+    // If the function returns 'Job not found', return 404
+    if (jobDescription === 'Job not found') {
+      return res.status(404).json({ 
+        error: 'Job not found',
+        jobId: jobId 
+      });
+    }
+    
+    res.json({ 
+      data: { 
+        jobId: jobId,
+        jobDescription: jobDescription 
+      } 
+    });
+    
+  } catch (error) {
+    console.error('Error fetching job description:', error);
+    res.status(500).json({ error: 'Failed to fetch job description' });
+  }
+});
+
+/**
+ * PUT /api/jobs/:id/update-info
+ * Update job information using the stored procedure
+ */
+router.put('/:id/update-info', async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    const { jobTitle, minSalary, maxSalary } = req.body;
+    
+    // Validation
+    if (!jobTitle) {
+      return res.status(400).json({ error: 'Job title is required' });
+    }
+    
+    if (jobTitle.length > 35) {
+      return res.status(400).json({ error: 'Job title cannot exceed 35 characters' });
+    }
+    
+    // Validate salary ranges
+    if (minSalary && (minSalary < 0 || minSalary > 999999)) {
+      return res.status(400).json({ error: 'Minimum salary must be between 0 and 999,999' });
+    }
+    
+    if (maxSalary && (maxSalary < 0 || maxSalary > 999999)) {
+      return res.status(400).json({ error: 'Maximum salary must be between 0 and 999,999' });
+    }
+    
+    if (minSalary && maxSalary && minSalary > maxSalary) {
+      return res.status(400).json({ error: 'Minimum salary cannot be greater than maximum salary' });
+    }
+    
+    // Call the stored procedure update_job_info
+    const sql = `
+      BEGIN
+        update_job_info(:jobId, :jobTitle, :minSalary, :maxSalary);
+      END;
+    `;
+    
+    const binds = {
+      jobId,
+      jobTitle,
+      minSalary: minSalary || null,
+      maxSalary: maxSalary || null
+    };
+    
+    await executeQuery(sql, binds);
+    
+    res.json({ 
+      message: 'Job information updated successfully',
+      data: { jobId, jobTitle, minSalary, maxSalary }
+    });
+    
+  } catch (error) {
+    console.error('Error updating job info:', error);
+    
+    // Handle specific Oracle errors
+    if (error.errorNum === 12899) {
+      res.status(400).json({ error: 'One or more field values exceed maximum length' });
+    } else if (error.errorNum === 1438) {
+      res.status(400).json({ error: 'Salary value is too large for the field precision' });
+    } else {
+      res.status(500).json({ error: 'Failed to update job information' });
+    }
+  }
+});
+
+/**
+ * POST /api/jobs/new-job
+ * Create a new job using the stored procedure
+ */
+router.post('/new-job', async (req, res) => {
+  try {
+    const { jobId, jobTitle, minSalary, maxSalary } = req.body;
+    
+    // Validation
+    if (!jobId || !jobTitle) {
+      return res.status(400).json({ error: 'Job ID and Job Title are required' });
+    }
+    
+    // Validate field lengths based on schema
+    if (jobId.length > 10) {
+      return res.status(400).json({ error: 'Job ID cannot exceed 10 characters' });
+    }
+    
+    if (jobTitle.length > 35) {
+      return res.status(400).json({ error: 'Job title cannot exceed 35 characters' });
+    }
+    
+    // Validate salary ranges
+    if (minSalary && (minSalary < 0 || minSalary > 999999)) {
+      return res.status(400).json({ error: 'Minimum salary must be between 0 and 999,999' });
+    }
+    
+    if (maxSalary && (maxSalary < 0 || maxSalary > 999999)) {
+      return res.status(400).json({ error: 'Maximum salary must be between 0 and 999,999' });
+    }
+    
+    if (minSalary && maxSalary && minSalary > maxSalary) {
+      return res.status(400).json({ error: 'Minimum salary cannot be greater than maximum salary' });
+    }
+    
+    // Call the stored procedure new_job
+    const sql = `
+      BEGIN
+        new_job(:jobId, :jobTitle, :minSalary, :maxSalary);
+      END;
+    `;
+    
+    const binds = {
+      jobId: jobId.toUpperCase(),
+      jobTitle,
+      minSalary: minSalary || null,
+      maxSalary: maxSalary || null
+    };
+    
+    await executeQuery(sql, binds);
+    
+    res.status(201).json({ 
+      message: 'A new job has been created',
+      data: { jobId: jobId.toUpperCase(), jobTitle, minSalary, maxSalary }
+    });
+    
+  } catch (error) {
+    console.error('Error creating new job:', error);
+    
+    // Handle specific Oracle errors
+    if (error.errorNum === 1) {
+      res.status(409).json({ error: 'Job with this ID already exists' });
+    } else if (error.errorNum === 12899) {
+      res.status(400).json({ error: 'One or more field values exceed maximum length' });
+    } else if (error.errorNum === 1438) {
+      res.status(400).json({ error: 'Salary value is too large for the field precision' });
+    } else {
+      res.status(500).json({ error: 'Failed to create new job' });
+    }
+  }
+});
+
+/**
  * POST /api/jobs
  * Create a new job
  */
