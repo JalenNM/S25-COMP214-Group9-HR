@@ -153,6 +153,59 @@ router.get('/stats', async (req, res) => {
 });
 
 /**
+ * GET /api/employees/search
+ * Search employees by query parameter
+ */
+router.get('/search', async (req, res) => {
+  try {
+    const searchTerm = req.query.q;
+    
+    if (!searchTerm) {
+      return res.status(400).json({ error: 'Search query parameter "q" is required' });
+    }
+    
+    const searchPattern = `%${searchTerm}%`;
+    
+    const sql = `
+      SELECT 
+        e.EMPLOYEE_ID,
+        e.FIRST_NAME,
+        e.LAST_NAME,
+        e.EMAIL,
+        e.PHONE_NUMBER,
+        e.HIRE_DATE,
+        e.SALARY,
+        e.COMMISSION_PCT,
+        e.JOB_ID,
+        j.JOB_TITLE,
+        e.DEPARTMENT_ID,
+        d.DEPARTMENT_NAME,
+        e.MANAGER_ID,
+        m.FIRST_NAME || ' ' || m.LAST_NAME as MANAGER_NAME
+      FROM HR_EMPLOYEES e
+      LEFT JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+      LEFT JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+      LEFT JOIN HR_EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID
+      WHERE UPPER(e.FIRST_NAME) LIKE UPPER(:searchPattern)
+         OR UPPER(e.LAST_NAME) LIKE UPPER(:searchPattern)
+         OR UPPER(e.EMAIL) LIKE UPPER(:searchPattern)
+         OR TO_CHAR(e.EMPLOYEE_ID) LIKE :searchPattern
+         OR UPPER(j.JOB_TITLE) LIKE UPPER(:searchPattern)
+         OR UPPER(d.DEPARTMENT_NAME) LIKE UPPER(:searchPattern)
+      ORDER BY e.LAST_NAME, e.FIRST_NAME
+    `;
+    
+    const result = await executeQuery(sql, { searchPattern });
+    
+    res.json({ data: result.rows });
+    
+  } catch (error) {
+    console.error('Error searching employees:', error);
+    res.status(500).json({ error: 'Failed to search employees' });
+  }
+});
+
+/**
  * GET /api/employees/:id
  * Get a specific employee by ID
  */
@@ -411,6 +464,12 @@ router.post('/hire', async (req, res) => {
       res.status(400).json({ error: 'One or more field values exceed maximum length' });
     } else if (error.errorNum === 1438) {
       res.status(400).json({ error: 'Numeric value is too large for the field precision' });
+    } else if (error.errorNum === 20100) {
+      // Handle salary validation trigger error
+      res.status(400).json({ error: error.message || 'Salary out of range for the selected job position' });
+    } else if (error.errorNum === 20101) {
+      // Handle job ID validation trigger error
+      res.status(400).json({ error: error.message || 'Invalid job ID specified' });
     } else {
       res.status(500).json({ error: 'Failed to hire employee: ' + error.message });
     }
@@ -537,6 +596,12 @@ router.put('/:id', async (req, res) => {
       res.status(400).json({ error: 'One or more field values exceed maximum length' });
     } else if (error.errorNum === 1438) {
       res.status(400).json({ error: 'Numeric value is too large for the field precision' });
+    } else if (error.errorNum === 20100) {
+      // Handle salary validation trigger error
+      res.status(400).json({ error: error.message || 'Salary out of range for the selected job position' });
+    } else if (error.errorNum === 20101) {
+      // Handle job ID validation trigger error
+      res.status(400).json({ error: error.message || 'Invalid job ID specified' });
     } else {
       res.status(500).json({ error: 'Failed to update employee' });
     }
@@ -581,14 +646,25 @@ router.get('/search/:term', async (req, res) => {
         e.LAST_NAME,
         e.EMAIL,
         e.PHONE_NUMBER,
+        e.HIRE_DATE,
+        e.SALARY,
+        e.COMMISSION_PCT,
+        e.JOB_ID,
         j.JOB_TITLE,
-        d.DEPARTMENT_NAME
+        e.DEPARTMENT_ID,
+        d.DEPARTMENT_NAME,
+        e.MANAGER_ID,
+        m.FIRST_NAME || ' ' || m.LAST_NAME as MANAGER_NAME
       FROM HR_EMPLOYEES e
       LEFT JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
       LEFT JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+      LEFT JOIN HR_EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID
       WHERE UPPER(e.FIRST_NAME) LIKE UPPER(:searchTerm)
          OR UPPER(e.LAST_NAME) LIKE UPPER(:searchTerm)
          OR UPPER(e.EMAIL) LIKE UPPER(:searchTerm)
+         OR TO_CHAR(e.EMPLOYEE_ID) LIKE :searchTerm
+         OR UPPER(j.JOB_TITLE) LIKE UPPER(:searchTerm)
+         OR UPPER(d.DEPARTMENT_NAME) LIKE UPPER(:searchTerm)
       ORDER BY e.LAST_NAME, e.FIRST_NAME
     `;
     

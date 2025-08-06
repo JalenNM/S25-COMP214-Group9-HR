@@ -17,7 +17,20 @@ async function apiCall(endpoint, options = {}) {
     const response = await fetch(url, config)
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      // Try to extract error message from response body
+      let errorMessage = `HTTP error! status: ${response.status}`
+      
+      try {
+        const errorData = await response.json()
+        if (errorData.error) {
+          errorMessage = errorData.error
+        }
+      } catch (parseError) {
+        // If we can't parse the response, use the default message
+        console.warn('Could not parse error response:', parseError)
+      }
+      
+      throw new Error(errorMessage)
     }
     
     return await response.json()
