@@ -3,9 +3,22 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Dark theme variables */
+  --dark-bg: #121212;
+  --dark-surface: #1e1e1e;
+  --dark-surface-variant: #2d2d2d;
+  --dark-text: #e0e0e0;
+  --dark-text-secondary: #b0b0b0;
+  --dark-border: #333333;
+  --dark-accent: #4dabf7;
+  --dark-accent-hover: #339af0;
+  --dark-success: #51cf66;
+  --dark-warning: #ffd43b;
+  --dark-danger: #ff6b6b;
+
+  color-scheme: dark;
+  color: var(--dark-text);
+  background-color: var(--dark-bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,56 +26,744 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* Force dark theme globally */
+html {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+a {
+  font-weight: 500;
+  color: var(--dark-accent);
+  text-decoration: inherit;
+}
+a:hover {
+  color: var(--dark-accent-hover);
 }
 
-button {
+h1, h2, h3, h4, h5, h6 {
+  color: var(--dark-text);
+}
+
+/* Override Bootstrap's default light theme styles */
+.container, .container-fluid {
+  color: var(--dark-text);
+}
+
+/* Card dark theme */
+.card {
+  background-color: var(--dark-surface);
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+.card-header {
+  background-color: var(--dark-surface-variant);
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+.card-body {
+  background-color: var(--dark-surface);
+  color: var(--dark-text);
+}
+
+/* Specific border color variants for cards */
+.card.border-info {
+  border-color: #17a2b8 !important;
+}
+
+.card.border-info .card-body {
+  background-color: var(--dark-surface);
+  color: var(--dark-text);
+}
+
+.card.border-info .card-title {
+  color: #17a2b8;
+}
+
+.card.border-primary {
+  border-color: var(--dark-accent) !important;
+}
+
+.card.border-success {
+  border-color: var(--dark-success) !important;
+}
+
+.card.border-warning {
+  border-color: var(--dark-warning) !important;
+}
+
+.card.border-danger {
+  border-color: var(--dark-danger) !important;
+}
+
+/* Table dark theme */
+.table {
+  color: var(--dark-text) !important;
+  background-color: var(--dark-surface) !important;
+}
+
+.table tbody tr {
+  background-color: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+}
+
+.table tbody tr td {
+  background-color: inherit !important;
+  color: var(--dark-text) !important;
+  border-color: var(--dark-border) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td,
+.table-striped > tbody > tr:nth-of-type(odd) > th {
+  background-color: var(--dark-surface-variant) !important;
+  color: var(--dark-text) !important;
+}
+
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+  background-color: #404040 !important;
+  color: var(--dark-text) !important;
+}
+
+.table-dark {
+  background-color: var(--dark-surface-variant) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.table-dark th,
+.table-dark td {
+  color: var(--dark-text) !important;
+}
+
+.table th,
+.table td {
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+/* Ensure table text is always visible */
+.table * {
+  color: var(--dark-text) !important;
+}
+
+/* Override Bootstrap's default table text colors */
+.table tbody td,
+.table tbody th {
+  color: var(--dark-text) !important;
+}
+
+/* Form controls dark theme */
+.form-control {
+  background-color: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.form-control:focus {
+  background-color: var(--dark-surface) !important;
+  border-color: var(--dark-accent) !important;
+  color: var(--dark-text) !important;
+  box-shadow: 0 0 0 0.2rem rgba(77, 171, 247, 0.25);
+}
+
+.form-control::placeholder {
+  color: var(--dark-text-secondary) !important;
+}
+
+/* Select dropdown dark theme */
+.form-select {
+  background-color: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e0e0e0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e") !important;
+}
+
+.form-select:focus {
+  background-color: var(--dark-surface) !important;
+  border-color: var(--dark-accent) !important;
+  color: var(--dark-text) !important;
+  box-shadow: 0 0 0 0.2rem rgba(77, 171, 247, 0.25);
+}
+
+/* Select options dark theme */
+.form-select option {
+  background-color: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+}
+
+.form-select option:checked {
+  background-color: var(--dark-accent) !important;
+  color: #ffffff !important;
+}
+
+.form-select option:hover {
+  background-color: var(--dark-surface-variant) !important;
+  color: var(--dark-text) !important;
+}
+
+/* Small form select styling */
+.form-select-sm {
+  background-color: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e0e0e0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e") !important;
+}
+
+.form-select-sm:focus {
+  background-color: var(--dark-surface) !important;
+  border-color: var(--dark-accent) !important;
+  color: var(--dark-text) !important;
+  box-shadow: 0 0 0 0.2rem rgba(77, 171, 247, 0.25);
+}
+
+.form-select-sm option {
+  background-color: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+}
+
+/* Browser-specific dropdown styling */
+select {
+  background-color: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  border-color: var(--dark-border) !important;
+}
+
+select:focus {
+  background-color: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  border-color: var(--dark-accent) !important;
+}
+
+/* Firefox-specific dropdown styling */
+select option {
+  background-color: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) dropdown styling */
+select::-webkit-scrollbar {
+  width: 8px;
+}
+
+select::-webkit-scrollbar-track {
+  background: var(--dark-surface);
+}
+
+select::-webkit-scrollbar-thumb {
+  background: var(--dark-surface-variant);
+  border-radius: 4px;
+}
+
+/* Input groups with selects */
+.input-group .form-select {
+  background-color: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.form-label {
+  color: var(--dark-text) !important;
+}
+
+.form-text {
+  color: var(--dark-text-secondary) !important;
+}
+
+/* Additional form styling for better visibility */
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: var(--dark-surface-variant) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text-secondary) !important;
+}
+
+.form-select:disabled {
+  background-color: var(--dark-surface-variant) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text-secondary) !important;
+}
+
+/* Form validation styles for dark theme */
+.form-control.is-valid,
+.form-select.is-valid {
+  border-color: var(--dark-success) !important;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--dark-danger) !important;
+}
+
+.valid-feedback {
+  color: var(--dark-success) !important;
+}
+
+.invalid-feedback {
+  color: var(--dark-danger) !important;
+}
+
+/* Alert dark theme */
+.alert {
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+.alert-info {
+  background-color: rgba(23, 162, 184, 0.15);
+  border-color: #17a2b8;
+  color: #17a2b8;
+}
+
+.alert-info strong {
+  color: #17a2b8;
+}
+
+.alert-info ul, .alert-info li {
+  color: #17a2b8;
+}
+
+.alert-warning {
+  background-color: rgba(255, 212, 59, 0.15);
+  border-color: var(--dark-warning);
+  color: var(--dark-warning);
+}
+
+.alert-danger {
+  background-color: rgba(255, 107, 107, 0.15);
+  border-color: var(--dark-danger);
+  color: var(--dark-danger);
+}
+
+.alert-success {
+  background-color: rgba(81, 207, 102, 0.15);
+  border-color: var(--dark-success);
+  color: var(--dark-success);
+}
+
+/* Button dark theme */
+.btn {
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: all 0.25s ease;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.btn-primary {
+  background-color: var(--dark-accent);
+  border-color: var(--dark-accent);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: var(--dark-accent-hover);
+  border-color: var(--dark-accent-hover);
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background-color: var(--dark-surface-variant);
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+.btn-secondary:hover {
+  background-color: #404040;
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+.btn-success {
+  background-color: var(--dark-success);
+  border-color: var(--dark-success);
+  color: #ffffff;
+}
+
+.btn-success:hover {
+  background-color: #40c057;
+  border-color: #40c057;
+  color: #ffffff;
+}
+
+.btn-danger {
+  background-color: var(--dark-danger);
+  border-color: var(--dark-danger);
+  color: #ffffff;
+}
+
+.btn-danger:hover {
+  background-color: #fa5252;
+  border-color: #fa5252;
+  color: #ffffff;
+}
+
+.btn-warning {
+  background-color: var(--dark-warning);
+  border-color: var(--dark-warning);
+  color: #000000;
+}
+
+.btn-warning:hover {
+  background-color: #ffda59;
+  border-color: #ffda59;
+  color: #000000;
+}
+
+/* Modal dark theme */
+.modal-content {
+  background-color: var(--dark-surface);
+  color: var(--dark-text);
+  border-color: var(--dark-border);
+}
+
+.modal-header {
+  border-color: var(--dark-border);
+}
+
+.modal-footer {
+  border-color: var(--dark-border);
+}
+
+/* Badge dark theme */
+.badge {
+  color: #ffffff;
+}
+
+.badge.bg-primary {
+  background-color: var(--dark-accent) !important;
+}
+
+.badge.bg-secondary {
+  background-color: var(--dark-surface-variant) !important;
+}
+
+.badge.bg-success {
+  background-color: var(--dark-success) !important;
+}
+
+.badge.bg-warning {
+  background-color: var(--dark-warning) !important;
+  color: #000000 !important;
+}
+
+.badge.bg-danger {
+  background-color: var(--dark-danger) !important;
+}
+
+.badge.bg-info {
+  background-color: #17a2b8 !important;
+  color: #ffffff !important;
+}
+
+/* Search highlighting for dark theme */
+mark,
+.bg-warning {
+  background-color: #ffc107 !important;
+  color: #000000 !important;
+  padding: 0.1em 0.2em;
+  border-radius: 0.2em;
+}
+
+/* Text colors */
+.text-muted {
+  color: var(--dark-text-secondary) !important;
+}
+
+.text-primary {
+  color: var(--dark-accent) !important;
+}
+
+.text-success {
+  color: var(--dark-success) !important;
+}
+
+.text-warning {
+  color: var(--dark-warning) !important;
+}
+
+.text-danger {
+  color: var(--dark-danger) !important;
+}
+
+.text-info {
+  color: #17a2b8 !important;
+}
+
+.text-dark {
+  color: var(--dark-text) !important;
+}
+
+/* Background colors */
+.bg-light {
+  background-color: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+}
+
+.bg-dark {
+  background-color: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
+}
+
+/* Additional bg-light combinations */
+.bg-light.p-3,
+.bg-light.p-4,
+.bg-light.p-5 {
+  background-color: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+}
+
+.bg-light.rounded {
+  background-color: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  border: 1px solid var(--dark-border);
+}
+
+/* Jumbotron/Hero section dark theme */
+.jumbotron {
+  background-color: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  border: 1px solid var(--dark-border);
+}
+
+/* Additional Bootstrap component dark theme styles */
+
+/* List group dark theme */
+.list-group-item {
+  background-color: var(--dark-surface);
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+.list-group-item:hover {
+  background-color: var(--dark-surface-variant);
+}
+
+.list-group-item.active {
+  background-color: var(--dark-accent);
+  border-color: var(--dark-accent);
+  color: #ffffff;
+}
+
+/* Breadcrumb dark theme */
+.breadcrumb {
+  background-color: var(--dark-surface);
+}
+
+.breadcrumb-item a {
+  color: var(--dark-accent);
+}
+
+.breadcrumb-item.active {
+  color: var(--dark-text-secondary);
+}
+
+/* Progress bar dark theme */
+.progress {
+  background-color: var(--dark-surface-variant);
+}
+
+.progress-bar {
+  background-color: var(--dark-accent);
+}
+
+/* Tooltip and popover dark theme */
+.tooltip .tooltip-inner {
+  background-color: var(--dark-surface-variant);
+  color: var(--dark-text);
+}
+
+.popover {
+  background-color: var(--dark-surface);
+  border-color: var(--dark-border);
+}
+
+.popover-body {
+  color: var(--dark-text);
+}
+
+/* Accordion dark theme */
+.accordion-item {
+  background-color: var(--dark-surface);
+  border-color: var(--dark-border);
+}
+
+.accordion-button {
+  background-color: var(--dark-surface);
+  color: var(--dark-text);
+  border-color: var(--dark-border);
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: var(--dark-surface-variant);
+  color: var(--dark-accent);
+}
+
+.accordion-body {
+  background-color: var(--dark-surface);
+  color: var(--dark-text);
+}
+
+/* Close button dark theme */
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Toast dark theme */
+.toast {
+  background-color: var(--dark-surface);
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+.toast-header {
+  background-color: var(--dark-surface-variant);
+  border-bottom-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+/* Scrollbar dark theme for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dark-surface-variant);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-border);
+}
+
+/* Force dark scrollbar for Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--dark-surface-variant) var(--dark-surface);
+}
+
+/* Force proper text color inheritance */
+.container,
+.container-fluid,
+.row,
+.col,
+.col-auto,
+.col-1, .col-2, .col-3, .col-4, .col-5, .col-6,
+.col-7, .col-8, .col-9, .col-10, .col-11, .col-12,
+.col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6,
+.col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+  color: var(--dark-text) !important;
+}
+
+/* More aggressive overrides for all content */
+.container *,
+.container-fluid *,
+.row *,
+.col *,
+div,
+p,
+span,
+label,
+h1, h2, h3, h4, h5, h6 {
+  color: var(--dark-text) !important;
+}
+
+/* Exception for badges and specific colored elements */
+.badge,
+.text-danger,
+.text-success,
+.text-warning,
+.text-info,
+.text-primary {
+  color: inherit !important;
+}
+
+/* Override any Bootstrap text utilities that might interfere */
+.text-body {
+  color: var(--dark-text) !important;
+}
+
+.text-reset {
+  color: var(--dark-text) !important;
+}
+
+/* Ensure lists are properly colored */
+ul, ol, li {
+  color: var(--dark-text);
+}
+
+/* Strong text visibility */
+strong, b {
+  color: var(--dark-text);
+  font-weight: 600;
+}
+
+/* Small text visibility */
+small, .small {
+  color: var(--dark-text-secondary);
+}
+
+/* Override Bootstrap's default table styling more aggressively */
+table, 
+table * {
+  color: var(--dark-text) !important;
+}
+
+/* Ensure table cells maintain proper color */
+tbody, thead, tfoot {
+  color: var(--dark-text) !important;
+}
+
+tbody tr, thead tr, tfoot tr {
+  color: var(--dark-text) !important;
+}
+
+tbody td, tbody th, thead td, thead th, tfoot td, tfoot th {
+  color: var(--dark-text) !important;
+}
+
+/* Border utilities for dark theme */
+.border {
+  border-color: var(--dark-border) !important;
+}
+
+.border-info {
+  border-color: #17a2b8 !important;
+}
+
+.border-primary {
+  border-color: var(--dark-accent) !important;
+}
+
+.border-success {
+  border-color: var(--dark-success) !important;
+}
+
+.border-warning {
+  border-color: var(--dark-warning) !important;
+}
+
+.border-danger {
+  border-color: var(--dark-danger) !important;
+}
+
+/* Rounded containers with borders */
+.rounded.border,
+.rounded.border-info,
+.rounded.border-primary {
+  background-color: var(--dark-surface);
+  color: var(--dark-text);
 }

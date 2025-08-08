@@ -555,7 +555,7 @@ function JobPage() {
 
             {/* Legend */}
             <div className="mt-3">
-              <div className="card bg-light">
+              <div className="card border-info">
                 <div className="card-body">
                   <h6 className="card-title">
                     <i className="bi bi-lightbulb me-2"></i>
@@ -685,7 +685,7 @@ function JobPage() {
 
             {/* Example and help section */}
             <div className="mt-4">
-              <div className="card bg-light">
+              <div className="card border-info">
                 <div className="card-body">
                   <h6 className="card-title">
                     <i className="bi bi-info-circle me-2"></i>
@@ -789,7 +789,7 @@ function JobPage() {
 
             {/* Help section */}
             <div className="mt-4">
-              <div className="card bg-light">
+              <div className="card border-info">
                 <div className="card-body">
                   <h6 className="card-title">
                     <i className="bi bi-info-circle me-2"></i>
