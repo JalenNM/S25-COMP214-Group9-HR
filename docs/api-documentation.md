@@ -121,9 +121,6 @@ Delete an employee.
 ### GET /api/employees/search/:term
 Search employees by name or email.
 
-### GET /api/employees/stats
-Get employee statistics and analytics.
-
 **Response:**
 ```json
 {
@@ -219,9 +216,6 @@ Update an existing job.
 
 ### DELETE /api/jobs/:id
 Delete a job (only if no employees assigned).
-
-### GET /api/jobs/stats
-Get job statistics and analytics.
 
 **Response:**
 ```json

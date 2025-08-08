@@ -11,18 +11,18 @@ s25-comp214-group9-hr/
 ├── docs/                        # Project documentation
 │   ├── api-documentation.md     # API endpoints documentation
 │   ├── database-schema.md       # Database schema and relationships
-│   └── setup-guide.md          # Complete setup instructions
-├── database/                    # Database scripts and schemas
-│   ├── schema.sql              # Database table creation scripts
-│   ├── sample-data.sql         # Sample HR data for testing
-│   └── procedures.sql          # Stored procedures and functions
+│   ├── setup-guide.md          # Complete setup instructions
+│   └── testing-guide.md        # Testing documentation and guidelines
+├── database/                    # Database scripts and procedures
+│   ├── employee_hire_procedure.sql     # Employee hiring stored procedure
+│   ├── jobs_menu_procedures.sql        # Job menu management procedures
+│   └── Task3_SalaryValidation.sql      # Salary validation procedures
 ├── backend/                     # Node.js/Express API Server
 │   ├── package.json            # Backend dependencies
 │   ├── server.js               # Main server entry point
-│   ├── .env.example            # Environment variables template
-│   ├── .env                    # Environment variables (not in git)
-│   ├── .gitignore              # Backend specific gitignore
 │   ├── README.md               # Backend documentation
+│   ├── .env.example            # Environment variables template
+│   ├── .gitignore              # Backend specific gitignore
 │   ├── db/                     # Database connection and utilities
 │   │   └── connection.js       # Oracle database connection pool
 │   └── routes/                 # API route handlers
@@ -33,8 +33,7 @@ s25-comp214-group9-hr/
     ├── package.json            # Frontend dependencies
     ├── vite.config.js          # Vite configuration
     ├── index.html              # HTML entry point
-    ├── .gitignore              # Frontend specific gitignore
-    ├── README.md               # Frontend documentation
+    ├── eslint.config.js        # ESLint configuration
     ├── public/                 # Static assets
     │   └── vite.svg            # Vite logo
     └── src/                    # React source code
@@ -42,10 +41,18 @@ s25-comp214-group9-hr/
         ├── App.jsx             # Main App component
         ├── App.css             # App styles
         ├── index.css           # Global styles
+        ├── assets/             # Images, icons, etc.
+        │   └── react.svg       # React logo
         ├── components/         # Reusable React components
+        │   ├── ConnectionStatus.jsx  # Database connection status
+        │   └── Navbar.jsx      # Navigation component
         ├── pages/              # Page components (routes)
-        ├── services/           # API service functions
-        └── assets/             # Images, icons, etc.
+        │   ├── DepartmentPage.jsx    # Department management page
+        │   ├── EmployeePage.jsx      # Employee management page
+        │   ├── HomePage.jsx          # Home page component
+        │   └── JobPage.jsx           # Job management page
+        └── services/           # API service functions
+            └── api.js          # API communication utilities
 ```
 
 ## Features
@@ -115,8 +122,9 @@ npm run dev
 ### 4. Database Setup
 ```bash
 # Run the SQL scripts in database/ folder in your Oracle database
-sqlplus username/password@database < database/schema.sql
-sqlplus username/password@database < database/sample-data.sql
+sqlplus username/password@database < database/employee_hire_procedure.sql
+sqlplus username/password@database < database/jobs_menu_procedures.sql
+sqlplus username/password@database < database/Task3_SalaryValidation.sql
 ```
 
 ## Documentation
@@ -124,8 +132,8 @@ sqlplus username/password@database < database/sample-data.sql
 - **[API Documentation](docs/api-documentation.md)**: Complete API reference
 - **[Database Schema](docs/database-schema.md)**: Database structure and relationships
 - **[Setup Guide](docs/setup-guide.md)**: Detailed installation instructions
+- **[Testing Guide](docs/testing-guide.md)**: Testing documentation and guidelines
 - **[Backend README](backend/README.md)**: Backend specific documentation
-- **[Frontend README](frontend/README.md)**: Frontend specific documentation
 
 ## API Endpoints
 
@@ -146,6 +154,7 @@ sqlplus username/password@database < database/sample-data.sql
 
 - Jalen Mendonca
 - Tsinat Timotewos
+- Maharaj Nath
 
 ## License
 

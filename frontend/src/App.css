@@ -552,6 +552,17 @@ p, span, div, li, td, th {
   color: inherit;
 }
 
+/* Clickable card titles */
+.clickable-card-title {
+  cursor: pointer !important;
+  transition: color 0.3s ease !important;
+  color: var(--dark-text-secondary) !important;
+}
+
+.clickable-card-title:hover {
+  color: var(--dark-accent) !important;
+}
+
 /* Override any remaining Bootstrap light theme elements */
 .bg-primary {
   background-color: var(--dark-accent) !important;
@@ -793,4 +804,9 @@ p, span, div, li, td, th {
 
 .btn-group .btn-danger {
   border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Job Title Dark Green Border */
+.job-title-badge {
+  border: 2px solid #006400 !important; /* Dark green border */
 }

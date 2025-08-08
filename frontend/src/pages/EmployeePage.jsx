@@ -504,7 +504,7 @@ function EmployeePage() {
                         <td>{employee.FIRST_NAME} {employee.LAST_NAME}</td>
                         <td>{employee.EMAIL}</td>
                         <td>{employee.PHONE_NUMBER || 'N/A'}</td>
-                        <td><span className="badge bg-secondary">{employee.JOB_TITLE}</span></td>
+                        <td><span className="badge bg-secondary job-title-badge">{employee.JOB_TITLE}</span></td>
                         <td><span className="badge bg-info text-dark">{employee.DEPARTMENT_NAME || 'N/A'}</span></td>
                         <td className="text-success"><strong>${employee.SALARY ? employee.SALARY.toLocaleString() : 'N/A'}</strong></td>
                         <td>{employee.MANAGER_NAME || 'N/A'}</td>
@@ -1009,9 +1009,12 @@ function EmployeePage() {
                                     ))}
                                   </select>
                                 ) : (
-                                  <span dangerouslySetInnerHTML={{
-                                    __html: highlightSearchTerm(employee.JOB_TITLE, searchQuery)
-                                  }} />
+                                  <span 
+                                    className="job-title-badge badge bg-secondary"
+                                    dangerouslySetInnerHTML={{
+                                      __html: highlightSearchTerm(employee.JOB_TITLE, searchQuery)
+                                    }} 
+                                  />
                                 )}
                               </td>
                               

@@ -23,7 +23,7 @@ function App() {
         return <DepartmentPage />
       case 'home':
       default:
-        return <HomePage />
+        return <HomePage setActiveMenu={setActiveMenu} />
     }
   }
 

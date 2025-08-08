@@ -1,6 +1,7 @@
 import ConnectionStatus from '../components/ConnectionStatus'
+import PropTypes from 'prop-types'
 
-function HomePage() {
+function HomePage({ setActiveMenu }) {
   return (
     <div className="container mt-4">
       <ConnectionStatus />
@@ -25,7 +26,12 @@ function HomePage() {
         <div className="col-md-4 mb-4">
           <div className="card">
             <div className="card-body">
-              <h5 className="card-title">Employee Management</h5>
+              <h5 
+                className="card-title clickable-card-title"
+                onClick={() => setActiveMenu('employees')}
+              >
+                Employee Management
+              </h5>
               <p className="card-text">
                 Manage employee records, personal information, job assignments, and performance tracking.
               </p>
@@ -36,7 +42,12 @@ function HomePage() {
         <div className="col-md-4 mb-4">
           <div className="card">
             <div className="card-body">
-              <h5 className="card-title">Job Management</h5>
+              <h5 
+                className="card-title clickable-card-title"
+                onClick={() => setActiveMenu('jobs')}
+              >
+                Job Management
+              </h5>
               <p className="card-text">
                 Create and manage job positions, salary ranges, and job requirements throughout your organization.
               </p>
@@ -47,7 +58,12 @@ function HomePage() {
         <div className="col-md-4 mb-4">
           <div className="card">
             <div className="card-body">
-              <h5 className="card-title">Department Management</h5>
+              <h5 
+                className="card-title clickable-card-title"
+                onClick={() => setActiveMenu('departments')}
+              >
+                Department Management
+              </h5>
               <p className="card-text">
                 Organize departments, assign managers, and track departmental information and locations.
               </p>
@@ -57,6 +73,10 @@ function HomePage() {
       </div>
     </div>
   )
+}
+
+HomePage.propTypes = {
+  setActiveMenu: PropTypes.func.isRequired
 }
 
 export default HomePage
