@@ -504,7 +504,7 @@ function EmployeePage() {
                         <td>{employee.FIRST_NAME} {employee.LAST_NAME}</td>
                         <td>{employee.EMAIL}</td>
                         <td>{employee.PHONE_NUMBER || 'N/A'}</td>
-                        <td><span className="badge bg-secondary">{employee.JOB_TITLE}</span></td>
+                        <td><span className="badge bg-secondary job-title-badge">{employee.JOB_TITLE}</span></td>
                         <td><span className="badge bg-info text-dark">{employee.DEPARTMENT_NAME || 'N/A'}</span></td>
                         <td className="text-success"><strong>${employee.SALARY ? employee.SALARY.toLocaleString() : 'N/A'}</strong></td>
                         <td>{employee.MANAGER_NAME || 'N/A'}</td>
@@ -515,7 +515,7 @@ function EmployeePage() {
                 </table>
                 
                 {/* Summary footer */}
-                <div className="mt-3 p-3 bg-light rounded">
+                <div className="mt-3 p-3 border border-info rounded">
                   <div className="row text-center">
                     <div className="col-md-3">
                       <strong>Total Employees:</strong><br/>
@@ -865,7 +865,7 @@ function EmployeePage() {
             </form>
 
             {/* Search Instructions */}
-            <div className="alert alert-light mb-3">
+            <div className="alert alert-info mb-3">
               <strong>Search & Edit Instructions:</strong>
               <ul className="mb-0 mt-2">
                 <li>Search by first name, last name, or full name</li>
@@ -1009,9 +1009,12 @@ function EmployeePage() {
                                     ))}
                                   </select>
                                 ) : (
-                                  <span dangerouslySetInnerHTML={{
-                                    __html: highlightSearchTerm(employee.JOB_TITLE, searchQuery)
-                                  }} />
+                                  <span 
+                                    className="job-title-badge badge bg-secondary"
+                                    dangerouslySetInnerHTML={{
+                                      __html: highlightSearchTerm(employee.JOB_TITLE, searchQuery)
+                                    }} 
+                                  />
                                 )}
                               </td>
                               

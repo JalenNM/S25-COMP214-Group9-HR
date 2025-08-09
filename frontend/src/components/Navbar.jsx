@@ -8,7 +8,7 @@ function Navbar({ activeMenu, setActiveMenu }) {
   ]
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
       <div className="container-fluid">
         <a 
           className="navbar-brand" 
